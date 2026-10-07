@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .login-box,
+        .dashboard {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-box {
+            width: 400px;
+            max-width: 100%;
+            margin: 80px auto;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px;
+            margin: 7px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 3px;
+            background: #2563eb;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .edit-btn {
+            background: #16a34a;
+        }
+
+        .logout-btn {
+            background: #555;
+            float: right;
+        }
+
+        .form-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .search-box {
+            margin-top: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .message {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        #dashboard {
+            display: none;
+        }
+
+        @media(max-width: 700px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+
+<div id="loginPage" class="container">
+
+    <div class="login-box">
+
+        <h1>🎓 Student Management</h1>
+        <h2>Login</h2>
+
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Enter username">
+
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Enter password">
+
+        <button onclick="login()" style="width:100%;">
+            Login
+        </button>
+
+        <p id="loginMessage" class="message"></p>
+
+        <hr>
+
+        <p style="text-align:center;">
+            <b>Demo Login</b><br>
+            Username: admin<br>
+            Password: 1234
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<div id="dashboard" class="container">
+
+    <div class="dashboard">
+
+        <button class="logout-btn" onclick="logout()">
+            Logout
+        </button>
+
+        <h1>🎓 Student Management System</h1>
+
+        <p style="text-align:center;">
+            Welcome, <b id="welcomeUser"></b>
+        </p>
+
+
+        <!-- STUDENT FORM -->
+
+        <div class="form-box">
+
+            <h2 id="formTitle">Add Student</h2>
+
+            <input type="hidden" id="editIndex">
+
+            <div class="form-row">
+
+                <div>
+                    <label>Register Number</label>
+                    <input type="text" id="regno"
+                           placeholder="Example: 101">
+                </div>
+
+                <div>
+                    <label>Student Name</label>
+                    <input type="text" id="name"
+                           placeholder="Enter student name">
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div>
+                    <label>Department</label>
+
+                    <select id="department">
+                        <option value="">Select Department</option>
+                        <option>CSE</option>
+                        <option>IT</option>
+                        <option>ECE</option>
+                        <option>EEE</option>
+                        <option>MECH</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Year</label>
+
+                    <select id="year">
+                        <option value="">Select Year</option>
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                        <option>4th Year</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div>
+                    <label>Mobile Number</label>
+                    <input type="text" id="mobile"
+                           placeholder="Enter mobile number">
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input type="email" id="email"
+                           placeholder="Enter email">
+                </div>
+
+            </div>
+
+
+            <button onclick="saveStudent()">
+                💾 Save Student
+            </button>
+
+            <button onclick="clearForm()">
+                Clear
+            </button>
+
+            <p id="formMessage" class="message"></p>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+            <h2>🔎 Search Student</h2>
+
+            <input type="text"
+                   id="search"
+                   placeholder="Search by Register Number or Name"
+                   onkeyup="displayStudents()">
+
+        </div>
+
+
+        <!-- STUDENT TABLE -->
+
+        <h2>📋 Student Details</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Register No</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Year</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="studentTable">
+            </tbody>
+
+        </table>
+
+        <p id="noData" style="text-align:center;">
+            No student data available.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // ================= LOGIN =================
+
+    function login() {
+
+        let username =
+            document.getElementById("username").value;
+
+        let password =
+            document.getElementById("password").value;
+
+        let message =
+            document.getElementById("loginMessage");
+
+
+        // Correct username and password
+
+        if (username === "admin" && password === "1234") {
+
+            document.getElementById("loginPage").style.display =
+                "none";
+
+            document.getElementById("dashboard").style.display =
+                "block";
+
+            document.getElementById("welcomeUser").innerText =
+                username;
+
+            message.innerText = "";
+
+            displayStudents();
+
+        }
+
+        else {
+
+            message.innerText =
+                "❌ Invalid username or password";
+
+            message.className = "message error";
+
+        }
+
+    }
+
+
+    // ================= LOGOUT =================
+
+    function logout() {
+
+        document.getElementById("dashboard").style.display =
+            "none";
+
+        document.getElementById("loginPage").style.display =
+            "block";
+
+        document.getElementById("username").value = "";
+
+        document.getElementById("password").value = "";
+
+    }
+
+
+    // ================= GET DATA =================
+
+    function getStudents() {
+
+        return JSON.parse(
+            localStorage.getItem("students")
+        ) || [];
+
+    }
+
+
+    // ================= SAVE STUDENT =================
+
+    function saveStudent() {
+
+        let regno =
+            document.getElementById("regno").value.trim();
+
+        let name =
+            document.getElementById("name").value.trim();
+
+        let department =
+            document.getElementById("department").value;
+
+        let year =
+            document.getElementById("year").value;
+
+        let mobile =
+            document.getElementById("mobile").value.trim();
+
+        let email =
+            document.getElementById("email").value.trim();
+
+        let message =
+            document.getElementById("formMessage");
+
+
+        // Validation
+
+        if (
+            regno === "" ||
+            name === "" ||
+            department === "" ||
+            year === "" ||
+            mobile === "" ||
+            email === ""
+        ) {
+
+            message.innerText =
+                "❌ Please fill all details";
+
+            message.className =
+                "message error";
+
+            return;
+
+        }
+
+
+        let students = getStudents();
+
+        let editIndex =
+            document.getElementById("editIndex").value;
+
+
+        // UPDATE
+
+        if (editIndex !== "") {
+
+            students[editIndex] = {
+
+                regno: regno,
+                name: name,
+                department: department,
+                year: year,
+                mobile: mobile,
+                email: email
+
+            };
+
+            message.innerText =
+                "✅ Student updated successfully";
+
+        }
+
+
+        // CREATE
+
+        else {
+
+            // Check duplicate register number
+
+            let duplicate =
+                students.some(
+                    student => student.regno === regno
+                );
+
+
+            if (duplicate) {
+
+                message.innerText =
+                    "❌ Register number already exists";
+
+                message.className =
+                    "message error";
+
+                return;
+
+            }
+
+
+            students.push({
+
+                regno: regno,
+                name: name,
+                department: department,
+                year: year,
+                mobile: mobile,
+                email: email
+
+            });
+
+
+            message.innerText =
+                "✅ Student added successfully";
+
+        }
+
+
+        localStorage.setItem(
+            "students",
+            JSON.stringify(students)
+        );
+
+
+        clearForm();
+
+        displayStudents();
+
+    }
+
+
+    // ================= DISPLAY =================
+
+    function displayStudents() {
+
+        let students = getStudents();
+
+        let table =
+            document.getElementById("studentTable");
+
+        let search =
+            document.getElementById("search").value
+            .toLowerCase();
+
+
+        table.innerHTML = "";
+
+
+        let filteredStudents =
+            students.filter(student =>
+
+                student.regno.toLowerCase().includes(search) ||
+
+                student.name.toLowerCase().includes(search)
+
+            );
+
+
+        if (filteredStudents.length === 0) {
+
+            document.getElementById("noData").style.display =
+                "block";
+
+            return;
+
+        }
+
+        else {
+
+            document.getElementById("noData").style.display =
+                "none";
+
+        }
+
+
+        filteredStudents.forEach((student) => {
+
+            let originalIndex =
+                students.indexOf(student);
+
+
+            let row = document.createElement("tr");
+
+
+            row.innerHTML = `
+
+                <td>${student.regno}</td>
+
+                <td>${student.name}</td>
+
+                <td>${student.department}</td>
+
+                <td>${student.year}</td>
+
+                <td>${student.mobile}</td>
+
+                <td>${student.email}</td>
+
+                <td>
+
+                    <button class="edit-btn"
+                            onclick="editStudent(${originalIndex})">
+                        Edit
+                    </button>
+
+                    <button class="delete-btn"
+                            onclick="deleteStudent(${originalIndex})">
+                        Delete
+                    </button>
+
+                </td>
+
+            `;
+
+
+            table.appendChild(row);
+
+        });
+
+    }
+
+
+    // ================= EDIT =================
+
+    function editStudent(index) {
+
+        let students = getStudents();
+
+        let student = students[index];
+
+
+        document.getElementById("regno").value =
+            student.regno;
+
+        document.getElementById("name").value =
+            student.name;
+
+        document.getElementById("department").value =
+            student.department;
+
+        document.getElementById("year").value =
+            student.year;
+
+        document.getElementById("mobile").value =
+            student.mobile;
+
+        document.getElementById("email").value =
+            student.email;
+
+
+        document.getElementById("editIndex").value =
+            index;
+
+
+        document.getElementById("formTitle").innerText =
+            "Edit Student";
+
+
+        document.getElementById("formMessage").innerText =
+            "✏️ Editing student details";
+
+    }
+
+
+    // ================= DELETE =================
+
+    function deleteStudent(index) {
+
+        let students = getStudents();
+
+
+        let confirmDelete =
+            confirm(
+                "Are you sure you want to delete this student?"
+            );
+
+
+        if (confirmDelete) {
+
+            students.splice(index, 1);
+
+
+            localStorage.setItem(
+                "students",
+                JSON.stringify(students)
+            );
+
+
+            displayStudents();
+
+
+            document.getElementById("formMessage").innerText =
+                "🗑️ Student deleted successfully";
+
+            document.getElementById("formMessage").className =
+                "message success";
+
+        }
+
+    }
+
+
+    // ================= CLEAR FORM =================
+
+    function clearForm() {
+
+        document.getElementById("regno").value = "";
+
+        document.getElementById("name").value = "";
+
+        document.getElementById("department").value = "";
+
+        document.getElementById("year").value = "";
+
+        document.getElementById("mobile").value = "";
+
+        document.getElementById("email").value = "";
+
+        document.getElementById("editIndex").value = "";
+
+        document.getElementById("formTitle").innerText =
+            "Add Student";
+
+    }
+
+
+</script>
+
+</body>
+</html>

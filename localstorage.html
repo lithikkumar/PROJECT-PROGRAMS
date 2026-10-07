@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Student Portal</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+}
+
+header {
+    background: #1e3a8a;
+    color: white;
+    padding: 18px;
+    text-align: center;
+}
+
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.login-box {
+    width: 420px;
+    max-width: 95%;
+    margin: 70px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px #bbb;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    margin: 4px;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.logout {
+    background: #dc2626;
+    float: right;
+}
+
+.delete {
+    background: #dc2626;
+}
+
+.edit {
+    background: #16a34a;
+}
+
+.view {
+    background: #7c3aed;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 18px;
+    margin: 20px 0;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #ccc;
+}
+
+.card h3 {
+    margin: 0;
+    color: #555;
+}
+
+.card p {
+    font-size: 25px;
+    font-weight: bold;
+    color: #1e3a8a;
+}
+
+.section {
+    background: white;
+    padding: 25px;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #ddd;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #1e3a8a;
+    color: white;
+}
+
+.profile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.profile div {
+    background: #f3f4f6;
+    padding: 14px;
+    border-radius: 7px;
+}
+
+.hidden {
+    display: none;
+}
+
+.message {
+    text-align: center;
+    font-weight: bold;
+    margin: 12px;
+}
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
+@media(max-width:700px) {
+    .form-grid,
+    .profile {
+        grid-template-columns: 1fr;
+    }
+
+    table {
+        font-size: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎓 Advanced Student Portal</h1>
+    <p>Student Management & Academic Portal</p>
+</header>
+
+
+<!-- ================= LOGIN ================= -->
+
+<div id="loginPage" class="container">
+
+<div class="login-box">
+
+<h2>🔐 Portal Login</h2>
+
+<label>Register Number / Admin ID</label>
+<input type="text" id="loginID"
+       placeholder="Enter Register Number">
+
+<label>Password</label>
+<input type="password" id="loginPassword"
+       placeholder="Enter Password">
+
+<button onclick="login()" style="width:100%;">
+    Login
+</button>
+
+<p id="loginMessage" class="message"></p>
+
+<hr>
+
+<p>
+<b>Admin:</b><br>
+ID: admin<br>
+Password: admin123
+</p>
+
+<p>
+<b>Student Demo:</b><br>
+101 / LITHIK101<br>
+102 / ARUN102<br>
+103 / PRIYA103
+</p>
+
+</div>
+</div>
+
+
+<!-- ================= ADMIN DASHBOARD ================= -->
+
+<div id="adminPage" class="container hidden">
+
+<button class="logout" onclick="logout()">Logout</button>
+
+<h2>👨‍💼 Admin Dashboard</h2>
+
+<div class="card-container">
+
+<div class="card">
+<h3>Total Students</h3>
+<p id="totalStudents">0</p>
+</div>
+
+<div class="card">
+<h3>CSE Students</h3>
+<p id="cseStudents">0</p>
+</div>
+
+<div class="card">
+<h3>IT Students</h3>
+<p id="itStudents">0</p>
+</div>
+
+<div class="card">
+<h3>Average Attendance</h3>
+<p id="avgAttendance">0%</p>
+</div>
+
+</div>
+
+
+<!-- SEARCH STUDENT -->
+
+<div class="section">
+
+<h2>🔎 Check Student</h2>
+
+<input type="text"
+       id="adminSearch"
+       placeholder="Enter Register Number"
+       onkeyup="searchStudent()">
+
+<div id="searchResult"></div>
+
+</div>
+
+
+<!-- ADD STUDENT -->
+
+<div class="section">
+
+<h2>➕ Add Student</h2>
+
+<input type="hidden" id="editIndex">
+
+<div class="form-grid">
+
+<div>
+<label>Register Number</label>
+<input type="text" id="regno"
+       placeholder="Example: 104">
+</div>
+
+<div>
+<label>Student Name</label>
+<input type="text" id="studentName"
+       placeholder="Enter Name">
+</div>
+
+<div>
+<label>Password</label>
+<input type="password" id="studentPassword"
+       placeholder="Student Password">
+</div>
+
+<div>
+<label>Department</label>
+<select id="department">
+<option value="">Select Department</option>
+<option>CSE</option>
+<option>IT</option>
+<option>ECE</option>
+<option>EEE</option>
+<option>MECH</option>
+</select>
+</div>
+
+<div>
+<label>Year</label>
+<select id="year">
+<option value="">Select Year</option>
+<option>1st Year</option>
+<option>2nd Year</option>
+<option>3rd Year</option>
+<option>4th Year</option>
+</select>
+</div>
+
+<div>
+<label>Mobile</label>
+<input type="text" id="mobile"
+       placeholder="Mobile Number">
+</div>
+
+<div>
+<label>Email</label>
+<input type="email" id="email"
+       placeholder="Email">
+</div>
+
+<div>
+<label>Attendance %</label>
+<input type="number" id="attendance"
+       min="0" max="100"
+       placeholder="Example: 85">
+</div>
+
+<div>
+<label>Marks</label>
+<input type="number" id="marks"
+       min="0" max="100"
+       placeholder="Example: 90">
+</div>
+
+</div>
+
+<button onclick="saveStudent()">💾 Save Student</button>
+<button onclick="clearForm()">Clear</button>
+
+<p id="formMessage" class="message"></p>
+
+</div>
+
+
+<!-- ALL STUDENTS -->
+
+<div class="section">
+
+<h2>📋 All Students</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Reg No</th>
+<th>Name</th>
+<th>Department</th>
+<th>Year</th>
+<th>Attendance</th>
+<th>Marks</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="studentTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= STUDENT DASHBOARD ================= -->
+
+<div id="studentPage" class="container hidden">
+
+<button class="logout" onclick="logout()">Logout</button>
+
+<h2>🎓 Student Dashboard</h2>
+
+<div class="card-container">
+
+<div class="card">
+<h3>Register Number</h3>
+<p id="myReg"></p>
+</div>
+
+<div class="card">
+<h3>Attendance</h3>
+<p id="myAttendance"></p>
+</div>
+
+<div class="card">
+<h3>Marks</h3>
+<p id="myMarks"></p>
+</div>
+
+<div class="card">
+<h3>Department</h3>
+<p id="myDepartment"></p>
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>👤 My Profile</h2>
+
+<div class="profile">
+
+<div>
+<b>Name</b>
+<p id="myName"></p>
+</div>
+
+<div>
+<b>Register Number</b>
+<p id="myReg2"></p>
+</div>
+
+<div>
+<b>Department</b>
+<p id="myDept2"></p>
+</div>
+
+<div>
+<b>Year</b>
+<p id="myYear"></p>
+</div>
+
+<div>
+<b>Mobile</b>
+<p id="myMobile"></p>
+</div>
+
+<div>
+<b>Email</b>
+<p id="myEmail"></p>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>📊 Academic Details</h2>
+
+<table>
+
+<tr>
+<th>Subject</th>
+<th>Marks</th>
+</tr>
+
+<tr>
+<td>Java</td>
+<td id="javaMark"></td>
+</tr>
+
+<tr>
+<td>Database</td>
+<td id="dbMark"></td>
+</tr>
+
+<tr>
+<td>Python</td>
+<td id="pythonMark"></td>
+</tr>
+
+<tr>
+<td>Web Technology</td>
+<td id="webMark"></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ================= DEFAULT STUDENTS ================= */
+
+let defaultStudents = [
+
+{
+regno:"101",
+name:"Lithik Kumar",
+password:"LITHIK101",
+department:"CSE",
+year:"2nd Year",
+mobile:"9876543210",
+email:"lithik@gmail.com",
+attendance:88,
+marks:92,
+java:95,
+database:90,
+python:92,
+web:91
+},
+
+{
+regno:"102",
+name:"Arun Kumar",
+password:"ARUN102",
+department:"IT",
+year:"2nd Year",
+mobile:"9876543211",
+email:"arun@gmail.com",
+attendance:82,
+marks:85,
+java:86,
+database:84,
+python:83,
+web:87
+},
+
+{
+regno:"103",
+name:"Priya",
+password:"PRIYA103",
+department:"CSE",
+year:"3rd Year",
+mobile:"9876543212",
+email:"priya@gmail.com",
+attendance:91,
+marks:94,
+java:96,
+database:93,
+python:95,
+web:92
+}
+
+];
+
+
+/* ================= LOAD DATA ================= */
+
+if (!localStorage.getItem("students")) {
+
+localStorage.setItem(
+    "students",
+    JSON.stringify(defaultStudents)
+);
+
+}
+
+
+function getStudents() {
+
+return JSON.parse(
+    localStorage.getItem("students")
+) || [];
+
+}
+
+
+/* ================= LOGIN ================= */
+
+function login() {
+
+let id =
+document.getElementById("loginID").value.trim();
+
+let password =
+document.getElementById("loginPassword").value;
+
+let message =
+document.getElementById("loginMessage");
+
+
+/* ADMIN LOGIN */
+
+if(id === "admin" && password === "admin123") {
+
+document.getElementById("loginPage")
+.style.display = "none";
+
+document.getElementById("adminPage")
+.classList.remove("hidden");
+
+displayStudents();
+updateDashboard();
+
+return;
+
+}
+
+
+/* STUDENT LOGIN */
+
+let students = getStudents();
+
+let student = students.find(
+s => s.regno === id &&
+s.password === password
+);
+
+
+if(student) {
+
+document.getElementById("loginPage")
+.style.display = "none";
+
+document.getElementById("studentPage")
+.classList.remove("hidden");
+
+showStudent(student);
+
+}
+
+else {
+
+message.innerText =
+"❌ Invalid Register Number or Password";
+
+message.className =
+"message error";
+
+}
+
+}
+
+
+/* ================= STUDENT PROFILE ================= */
+
+function showStudent(student) {
+
+document.getElementById("myReg").innerText =
+student.regno;
+
+document.getElementById("myReg2").innerText =
+student.regno;
+
+document.getElementById("myName").innerText =
+student.name;
+
+document.getElementById("myDepartment").innerText =
+student.department;
+
+document.getElementById("myDept2").innerText =
+student.department;
+
+document.getElementById("myYear").innerText =
+student.year;
+
+document.getElementById("myMobile").innerText =
+student.mobile;
+
+document.getElementById("myEmail").innerText =
+student.email;
+
+document.getElementById("myAttendance").innerText =
+student.attendance + "%";
+
+document.getElementById("myMarks").innerText =
+student.marks;
+
+document.getElementById("javaMark").innerText =
+student.java;
+
+document.getElementById("dbMark").innerText =
+student.database;
+
+document.getElementById("pythonMark").innerText =
+student.python;
+
+document.getElementById("webMark").innerText =
+student.web;
+
+}
+
+
+/* ================= ADMIN SEARCH ================= */
+
+function searchStudent() {
+
+let reg =
+document.getElementById("adminSearch")
+.value.trim();
+
+let result =
+document.getElementById("searchResult");
+
+if(reg === "") {
+
+result.innerHTML = "";
+
+return;
+
+}
+
+let students = getStudents();
+
+let student =
+students.find(s => s.regno === reg);
+
+
+if(!student) {
+
+result.innerHTML =
+"<p class='message error'>❌ Student not found</p>";
+
+return;
+
+}
+
+
+result.innerHTML = `
+
+<div class="profile">
+
+<div>
+<b>Register Number</b>
+<p>${student.regno}</p>
+</div>
+
+<div>
+<b>Name</b>
+<p>${student.name}</p>
+</div>
+
+<div>
+<b>Department</b>
+<p>${student.department}</p>
+</div>
+
+<div>
+<b>Year</b>
+<p>${student.year}</p>
+</div>
+
+<div>
+<b>Attendance</b>
+<p>${student.attendance}%</p>
+</div>
+
+<div>
+<b>Marks</b>
+<p>${student.marks}</p>
+</div>
+
+<div>
+<b>Email</b>
+<p>${student.email}</p>
+</div>
+
+<div>
+<b>Mobile</b>
+<p>${student.mobile}</p>
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* ================= SAVE / UPDATE ================= */
+
+function saveStudent() {
+
+let regno =
+document.getElementById("regno").value.trim();
+
+let name =
+document.getElementById("studentName").value.trim();
+
+let password =
+document.getElementById("studentPassword").value;
+
+let department =
+document.getElementById("department").value;
+
+let year =
+document.getElementById("year").value;
+
+let mobile =
+document.getElementById("mobile").value.trim();
+
+let email =
+document.getElementById("email").value.trim();
+
+let attendance =
+document.getElementById("attendance").value;
+
+let marks =
+document.getElementById("marks").value;
+
+let message =
+document.getElementById("formMessage");
+
+
+if(
+regno === "" ||
+name === "" ||
+password === "" ||
+department === "" ||
+year === "" ||
+mobile === "" ||
+email === "" ||
+attendance === "" ||
+marks === ""
+) {
+
+message.innerText =
+"❌ Please fill all details";
+
+message.className =
+"message error";
+
+return;
+
+}
+
+
+let students = getStudents();
+
+let editIndex =
+document.getElementById("editIndex").value;
+
+
+/* UPDATE */
+
+if(editIndex !== "") {
+
+students[editIndex].regno = regno;
+students[editIndex].name = name;
+students[editIndex].password = password;
+students[editIndex].department = department;
+students[editIndex].year = year;
+students[editIndex].mobile = mobile;
+students[editIndex].email = email;
+students[editIndex].attendance = attendance;
+students[editIndex].marks = marks;
+
+message.innerText =
+"✅ Student updated successfully";
+
+}
+
+
+/* ADD */
+
+else {
+
+let exists =
+students.some(s => s.regno === regno);
+
+if(exists) {
+
+message.innerText =
+"❌ Register Number already exists";
+
+message.className =
+"message error";
+
+return;
+
+}
+
+
+students.push({
+
+regno:regno,
+name:name,
+password:password,
+department:department,
+year:year,
+mobile:mobile,
+email:email,
+attendance:attendance,
+marks:marks,
+java:marks,
+database:marks,
+python:marks,
+web:marks
+
+});
+
+
+message.innerText =
+"✅ Student added successfully";
+
+}
+
+
+localStorage.setItem(
+"students",
+JSON.stringify(students)
+);
+
+clearForm();
+
+displayStudents();
+
+updateDashboard();
+
+}
+
+
+/* ================= DISPLAY ================= */
+
+function displayStudents() {
+
+let students = getStudents();
+
+let table =
+document.getElementById("studentTable");
+
+table.innerHTML = "";
+
+students.forEach((student,index) => {
+
+let row = document.createElement("tr");
+
+row.innerHTML = `
+
+<td>${student.regno}</td>
+<td>${student.name}</td>
+<td>${student.department}</td>
+<td>${student.year}</td>
+<td>${student.attendance}%</td>
+<td>${student.marks}</td>
+
+<td>
+
+<button class="view"
+onclick="viewStudent('${student.regno}')">
+View
+</button>
+
+<button class="edit"
+onclick="editStudent(${index})">
+Edit
+</button>
+
+<button class="delete"
+onclick="deleteStudent(${index})">
+Delete
+</button>
+
+</td>
+
+`;
+
+table.appendChild(row);
+
+});
+
+}
+
+
+/* ================= VIEW ================= */
+
+function viewStudent(regno) {
+
+document.getElementById("adminSearch")
+.value = regno;
+
+searchStudent();
+
+}
+
+
+/* ================= EDIT ================= */
+
+function editStudent(index) {
+
+let students = getStudents();
+
+let s = students[index];
+
+document.getElementById("regno").value =
+s.regno;
+
+document.getElementById("studentName").value =
+s.name;
+
+document.getElementById("studentPassword").value =
+s.password;
+
+document.getElementById("department").value =
+s.department;
+
+document.getElementById("year").value =
+s.year;
+
+document.getElementById("mobile").value =
+s.mobile;
+
+document.getElementById("email").value =
+s.email;
+
+document.getElementById("attendance").value =
+s.attendance;
+
+document.getElementById("marks").value =
+s.marks;
+
+document.getElementById("editIndex").value =
+index;
+
+}
+
+
+/* ================= DELETE ================= */
+
+function deleteStudent(index) {
+
+let students = getStudents();
+
+let confirmDelete =
+confirm(
+"Are you sure you want to delete this student?"
+);
+
+if(confirmDelete) {
+
+students.splice(index,1);
+
+localStorage.setItem(
+"students",
+JSON.stringify(students)
+);
+
+displayStudents();
+
+updateDashboard();
+
+alert("Student deleted successfully");
+
+}
+
+}
+
+
+/* ================= DASHBOARD ================= */
+
+function updateDashboard() {
+
+let students = getStudents();
+
+document.getElementById("totalStudents")
+.innerText = students.length;
+
+document.getElementById("cseStudents")
+.innerText =
+students.filter(s => s.department === "CSE").length;
+
+document.getElementById("itStudents")
+.innerText =
+students.filter(s => s.department === "IT").length;
+
+
+let total = 0;
+
+students.forEach(s => {
+total += Number(s.attendance);
+});
+
+let average =
+students.length ?
+Math.round(total / students.length) :
+0;
+
+document.getElementById("avgAttendance")
+.innerText =
+average + "%";
+
+}
+
+
+/* ================= CLEAR ================= */
+
+function clearForm() {
+
+document.getElementById("regno").value = "";
+document.getElementById("studentName").value = "";
+document.getElementById("studentPassword").value = "";
+document.getElementById("department").value = "";
+document.getElementById("year").value = "";
+document.getElementById("mobile").value = "";
+document.getElementById("email").value = "";
+document.getElementById("attendance").value = "";
+document.getElementById("marks").value = "";
+document.getElementById("editIndex").value = "";
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+function logout() {
+
+document.getElementById("adminPage")
+.classList.add("hidden");
+
+document.getElementById("studentPage")
+.classList.add("hidden");
+
+document.getElementById("loginPage")
+.style.display = "block";
+
+document.getElementById("loginID").value = "";
+document.getElementById("loginPassword").value = "";
+
+}
+
+</script>
+
+</body>
+</html>
